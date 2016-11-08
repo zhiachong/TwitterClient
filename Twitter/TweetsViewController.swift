@@ -8,12 +8,15 @@
 
 import UIKit
 import ALLoadingView
+import SwiftIconFont
 
-class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, ComposeViewControllerDelegate {
+class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, ComposeViewControllerDelegate, TweetTableViewCellDelegate {
     var tweets: [Tweet]?
     var isMoreDataLoading: Bool! = false
     let refreshControl = UIRefreshControl()
     
+    @IBOutlet weak var logoutBarButtonItem: UIBarButtonItem!
+    @IBOutlet weak var composeBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +28,13 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 100
         
+        composeBarButtonItem.icon(from: .FontAwesome, code: "edit", ofSize: 20.0)
+        logoutBarButtonItem.icon(from: .FontAwesome, code: "sign-out", ofSize: 20.0)
         // Do any additional setup after loading the view.
         TwitterClient.sharedInstance.homeTimelineWithParams(params: nil) { (tweets, error) in
             if (error == nil) {
                 self.tweets = tweets
                 // reload the table view
-                print (self.tweets)
                 self.tableView.reloadData()
             } else {
                 print ("Error received! \(error)")
@@ -77,8 +81,10 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetTableViewCell", for: indexPath) as! TweetTableViewCell
         cell.tweet = self.tweets?[indexPath.row]
+        cell.delegate = self
         return cell
     }
+    
     
     func setupView() {
         self.navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 0, green: 0.67, blue: 0.929, alpha: 1.0)
@@ -138,6 +144,20 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
     }
+    
+    func tweetTableViewCell(tweetTableViewCell: TweetTableViewCell, didTapOnUser userName: String) {
+        print("Tapped on the view cell \(userName)")
+        
+        TwitterClient.sharedInstance.getUser(screenName: userName, success: {(user) in
+            print ("Got the user \(user)")
+            let profileVc = self.storyboard?.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+            profileVc.user = user
+            self.navigationController?.pushViewController(profileVc, animated: true)
+        }, failure: {(error) in
+            print ("Oh noesssss \(error!)")
+        })
+    }
+    
     
     
     // MARK: - Navigation

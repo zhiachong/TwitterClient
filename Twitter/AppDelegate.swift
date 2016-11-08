@@ -8,6 +8,7 @@
 
 import UIKit
 import BDBOAuth1Manager
+import SlideMenuControllerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,7 +25,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // go to the logged in screen
             let vc = storyboard.instantiateViewController(withIdentifier: "TweetsViewController") as UIViewController
             let nc = UINavigationController(rootViewController: vc)
-            window?.rootViewController = nc
+            //window?.rootViewController = nc
+            
+            let mvc = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as UIViewController
+            let mnc = UINavigationController(rootViewController: mvc)
+            
+            let slideMenuController = SlideMenuController(mainViewController: nc, leftMenuViewController: mnc)
+            
+            window?.rootViewController = slideMenuController
+            window?.makeKeyAndVisible()
         }
         
         return true

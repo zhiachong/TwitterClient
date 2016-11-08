@@ -9,7 +9,12 @@
 import UIKit
 import AFNetworking
 
+@objc protocol TweetTableViewCellDelegate {
+    @objc optional func tweetTableViewCell(tweetTableViewCell: TweetTableViewCell, didTapOnUser userName: String)
+}
+
 class TweetTableViewCell: UITableViewCell {
+    weak var delegate: TweetTableViewCellDelegate?
     
     var tweet: Tweet! {
         didSet {
@@ -34,6 +39,12 @@ class TweetTableViewCell: UITableViewCell {
             if (tweet.text != nil) {
                 tweetLabel.text = tweet.text
             }
+            
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(faceTapped))
+            tapGestureRecognizer.numberOfTapsRequired = 1
+            profileHeaderImageView.isUserInteractionEnabled = true
+            profileHeaderImageView.addGestureRecognizer(tapGestureRecognizer)
+            print ("Set up the tap gesture") 
         }
     }
 
@@ -57,4 +68,8 @@ class TweetTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    func faceTapped() {
+        print("face tapped \((tweet.user?.name)!)")
+        delegate?.tweetTableViewCell!(tweetTableViewCell: self, didTapOnUser: (tweet.user?.screenName)!)
+    }
 }

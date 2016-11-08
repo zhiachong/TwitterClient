@@ -17,17 +17,23 @@ PODS:
   - ALLoadingView (1.0.2)
   - BDBOAuth1Manager (2.0.0):
     - AFNetworking/NSURLSession (~> 3.0.0)
+  - SlideMenuControllerSwift (3.0.0)
+  - SwiftIconFont (2.6.0)
 
 DEPENDENCIES:
   - AFNetworking
   - ALLoadingView
   - BDBOAuth1Manager
+  - SlideMenuControllerSwift
+  - SwiftIconFont
 
 SPEC CHECKSUMS:
   AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
   ALLoadingView: 14a12aaff639a676de662634e3e44b62f17e96ec
   BDBOAuth1Manager: 92d17d06f8a648602962304cd2f35ae7394fa001
+  SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
+  SwiftIconFont: bbe1f32e1e16bac87dad8566afc80132cb8d072c
 
-PODFILE CHECKSUM: bb09f07bdffd55619446b6a6cd6c78385725d6dd
+PODFILE CHECKSUM: cf151d16850705fb988c874eb57215f46a43b28b
 
 COCOAPODS: 1.1.0.rc.3

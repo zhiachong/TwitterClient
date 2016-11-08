@@ -43,8 +43,6 @@ class TwitterClient: BDBOAuth1SessionManager {
         TwitterClient.sharedInstance.post("1.1/statuses/update.json", parameters: params, progress: { (progress) in
             print (progress)
             }, success: { (session, response) in
-                print("Success!")
-                print (response)
                 completion(true, nil)
             }, failure: { (session, error) in
                 print ("session failed: \(error)")
@@ -65,7 +63,6 @@ class TwitterClient: BDBOAuth1SessionManager {
             
             }, failure: {(error: Error?) -> Void in
                 print ("Failed to get the tokeN!")
-                print (error)
                 self.loginCompletion?(nil, error)
             }
         )
@@ -90,10 +87,70 @@ class TwitterClient: BDBOAuth1SessionManager {
             
             
         }) { (error: Error?) in
-            print ("Shoot!" )
-            print (error)
+            print ("Shoot!\(error)" )
         }
     }
+    
+    func getUser(screenName: String, count: Int = 20, success: @escaping (User) -> (), failure: @escaping (Error?) -> ()) {
+        print("TwitterClient: users/show.json")
+        
+        let params = ["screen_name" : screenName]                      
+        
+        TwitterClient.sharedInstance.get("1.1/users/show.json", parameters: params, progress: nil, success: { (task, response: Any?) in
+            
+            let user = User(dictionary: response as! NSDictionary)
+            
+            success(user)
+        }, failure: { (task: URLSessionDataTask?, error: Error?) in
+            failure(error)
+        })
+    }
+    
+    func userTimeline(screenName: String, count: Int = 20, success: @escaping ([Tweet]) -> (), failure: @escaping (Error?) -> ()) {
+        print("TwitterClient: statuses/user_timeline")
 
+        let params = ["screen_name" : screenName,
+                      "count" : count,
+                      "include_rts": true] as [String : Any]
+
+        TwitterClient.sharedInstance.get("1.1/statuses/user_timeline.json", parameters: params, progress: nil, success: { (task, response: Any?) in
+
+            let tweets = Tweet.tweetsWithArray(array: response as! [NSDictionary])
+
+            success(tweets)
+            }, failure: { (task: URLSessionDataTask?, error: Error?) in
+                failure(error)
+        })
+    }
+    
+    func mentionsTimeline(screenName: String, count: Int = 20, success: @escaping ([Tweet]) -> (), failure: @escaping (Error?) -> ()) {
+        print("TwitterClient: statuses/mentions_timeline")
+        
+        let params = ["screen_name" : screenName,
+                      "count" : count,
+                      "include_rts": true] as [String : Any]
+        
+        TwitterClient.sharedInstance.get("1.1/statuses/mentions_timeline.json", parameters: params, progress: nil, success: { (task, response: Any?) in
+            
+            let tweets = Tweet.tweetsWithArray(array: response as! [NSDictionary])
+            
+            success(tweets)
+        }, failure: { (task: URLSessionDataTask?, error: Error?) in
+            failure(error)
+        })
+    }
+    
+    func mentionsTimelineWithParams(params: NSDictionary?, completion: @escaping (_ tweets: [Tweet]?, _ error: Error?) -> ()) {
+        print("TwitterClient: statuses/mentions_timeline")
+        
+        TwitterClient.sharedInstance.get("1.1/statuses/mentions_timeline.json", parameters: params, progress: nil, success: { (task, response: Any?) in
+            
+            let tweets = Tweet.tweetsWithArray(array: response as! [NSDictionary])
+            
+            completion(tweets, nil)
+        }, failure: { (task: URLSessionDataTask?, error: Error?) in
+            print ("Error! ")
+        })
+    }
 
 }

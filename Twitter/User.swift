@@ -23,6 +23,7 @@ class User: NSObject {
     var friendsCount: Int?
     var statusesCount: Int?
     var dictionary: NSDictionary?
+    var profileBackgroundUrl: String?
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
@@ -32,6 +33,8 @@ class User: NSObject {
         followersCount = dictionary["followers_count"] as? Int
         friendsCount = dictionary["friends_count"] as? Int
         statusesCount = dictionary["statuses_count"] as? Int
+        profileBackgroundUrl = dictionary["profile_background_image_url"] as? String
+        print(dictionary)
         self.dictionary = dictionary
     }
     
